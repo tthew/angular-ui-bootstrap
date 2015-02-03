@@ -4,6 +4,17 @@
       <span bind-html-unsafe="match.label | typeaheadHighlight:query"></span>
   </a>
 </script>
+<script type="text/ng-template" id="customPopupTemplate.html">
+  <div>
+
+    <ul class="dropdown-menu" ng-show="isOpen()" ng-style="{top: position.top+'px', left: position.left+'px'}" style="display: block;" role="listbox" aria-hidden="{{!isOpen()}}">
+      <li><label>Custom Popup</label></li>
+      <li ng-repeat="match in matches | limitTo:10 track by $index" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)" role="option" id="{{match.id}}">
+        <div typeahead-match index="$index" match="match" query="query" template-url="templateUrl"></div>
+      </li>
+    </ul>
+  </div>
+</script>
 <div class='container-fluid' ng-controller="TypeaheadCtrl">
 
     <h4>Static arrays</h4>
@@ -18,4 +29,8 @@
     <h4>Custom templates for results</h4>
     <pre>Model: {{customSelected | json}}</pre>
     <input type="text" ng-model="customSelected" placeholder="Custom template" typeahead="state as state.name for state in statesWithFlags | filter:{name:$viewValue}" typeahead-template-url="customTemplate.html" class="form-control">
+
+    <h4>Custom templates for popup</h4>
+    <pre>Model: {{customSelected | json}}</pre>
+    <input type="text" ng-model="customSelected" placeholder="Custom template" typeahead="state as state.name for state in statesWithFlags | filter:{name:$viewValue}" typeahead-template-url="customTemplate.html" typeahead-popup-template-url="customPopupTemplate.html" class="form-control">
 </div>

@@ -101,6 +101,11 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
         popUpEl.attr('template-url', attrs.typeaheadTemplateUrl);
       }
 
+      //custom popup template
+      if (angular.isDefined(attrs.typeaheadPopupTemplateUrl)) {
+        popUpEl.attr('popup-template-url', attrs.typeaheadPopupTemplateUrl);
+      }
+
       var resetMatches = function() {
         scope.matches = [];
         scope.activeIdx = -1;
@@ -172,7 +177,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
       //we need to propagate user's query so we can higlight matches
       scope.query = undefined;
 
-      //Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later 
+      //Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later
       var timeoutPromise;
 
       var scheduleSearchWithTimeout = function(inputValue) {
@@ -334,7 +339,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
 
 }])
 
-  .directive('typeaheadPopup', function () {
+  .directive('typeaheadPopup', function ($http, $templateCache, $compile, $parse) {
     return {
       restrict:'EA',
       scope:{
@@ -345,8 +350,12 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
         select:'&'
       },
       replace:true,
-      templateUrl:'template/typeahead/typeahead-popup.html',
       link:function (scope, element, attrs) {
+
+        var tplUrl = attrs.popupTemplateUrl || 'template/typeahead/typeahead-popup.html';
+        $http.get(tplUrl, {cache: $templateCache}).success(function(tplContent){
+           element.replaceWith($compile(tplContent.trim())(scope));
+        });
 
         scope.templateUrl = attrs.templateUrl;
 
